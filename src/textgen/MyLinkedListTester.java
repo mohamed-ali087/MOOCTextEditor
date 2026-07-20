@@ -120,43 +120,109 @@ public class MyLinkedListTester {
 	/** Test adding an element into the end of the list, specifically
 	 *  public boolean add(E element)
 	 * */
-//	@Test
-//	public void testAddEnd()
-//	{
-//        // TODO: implement this test
-//		
-//	}
-//
+	@Test
+	public void testAddEnd()
+	{
+		/* Test procedures
+		 * 1- check if the last element has the added value
+		 * 2- check if size is incremented by 1
+		 * 3- check if the next element is tail
+		 * 4- check if prev is the previous value (for non-empty list)
+		 * 5- check if prev.next = the new node.
+		 */
+		
+		/*
+		 * Check for empty list (corner case)
+		 */
+		emptyList.add(3);
+		assertEquals("Check size for empytList", 1, emptyList.size());
+		assertEquals("Check new element value for empytList", 3, emptyList.get(0).intValue());
+		assertEquals("Check if the new element's next node is the tail for empytList", emptyList.tail, emptyList.getNode(0).next);
+		assertEquals("Check the link between the new node and it's previous node for empytList", emptyList.getNode(0), emptyList.head.next);
+		
+		/*
+		 * Check for regular list (short list)
+		 */
+		
+		shortList.add("C");
+		assertEquals("Check size for shortList", 3, shortList.size());
+		assertEquals("Check new element value for shortList", "C", shortList.get(2));
+		assertEquals("Check if the new element's next node is the tail for shortList", shortList.tail, shortList.getNode(2).next);
+		assertEquals("Check the link between the new node and it's previous node for shortList", shortList.getNode(2), shortList.getNode(2).prev.next);
+		assertEquals("Check the previous value", "B", shortList.get(1));
+		
+		
+	}
+
 	
-//	/** Test the size of the list */
-//	@Test
-//	public void testSize()
-//	{
-//		// TODO: implement this test
-//	}
-//
+	/** Test the size of the list */
+	@Test
+	public void testSize()
+	{
+		// Corner case: emptyList
+		assertEquals("Check emptyList size", 0, emptyList.size());
+		// shortList
+		assertEquals("Check shortList size", 2, shortList.size());
+	}
+
 	
 	
 	/** Test adding an element into the list at a specified index,
 	 * specifically:
 	 * public void add(int index, E element)
 	 * */
-//	@Test
-//	public void testAddAtIndex()
-//	{
-//        // TODO: implement this test
-//		
-//	}
-//	
-//	/** Test setting an element in the list */
-//	@Test
-//	public void testSet()
-//	{
-//	    // TODO: implement this test
-//	    
-//	}
-//	
-//	
-//	// TODO: Optionally add more test methods.
+	@Test
+	public void testAddAtIndex()
+	{
+		/*	procedures
+		 * 	1- check if the value was added in the right index
+		 * 	2- check for linking
+		 * 		prev = oldNode.prev
+		 * 		next = oldNode
+		 * 		oldNode.next = the newNode
+		 * 	3- check that oldNode is pushed the right direction
+		 * 	4- check if size is incremented by 1
+		 *  
+		 */
+		
+		/*
+		 * Test for list1
+		 * corner cases: add in index: 0
+		 * 						       2
+		 * 
+		 * regular: add in index: 1
+		 */
+		
+		list1.add(2, 11);
+		assertEquals("check if the value was added in the right index for index 2",
+				11, list1.get(2).intValue());
+		
+		list1.add(0, 22);
+		assertEquals("check if the value was added in the right index for index 0",
+				22, list1.get(0).intValue());
+		
+		list1.add(1, 33);
+		assertEquals("check that nodes are pushed the right direction, for the prev node",
+				22, list1.get(0).intValue());
+		
+		assertEquals("check that nodes are pushed the right direction, for the next node",
+				21, list1.get(2).intValue());
+		
+		assertEquals("Check for size increment", 6, list1.size());
+		
+		
+		
+	}
+	
+	/** Test setting an element in the list */
+	@Test
+	public void testSet()
+	{
+	    // TODO: implement this test
+	    
+	}
+	
+	
+	// TODO: Optionally add more test methods.
 	
 }

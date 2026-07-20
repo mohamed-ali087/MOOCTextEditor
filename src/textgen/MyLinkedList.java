@@ -33,8 +33,9 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 */
 	public boolean add(E data) /*(E element )*/
 	{
-		add(size, data);
-		return false;
+		/* add(size, data);
+		return false; */
+		return super.add(data);
 	}
 
 	
@@ -43,7 +44,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 * This method would be protected in a linked list package
 	 */
 
-	private LLNode<E> getNode(int index) throws IndexOutOfBoundsException{
+	protected LLNode<E> getNode(int index) throws IndexOutOfBoundsException{
 
 
 		if(index > (size - 1) || index < 0) {
@@ -116,7 +117,7 @@ public class MyLinkedList<E> extends AbstractList<E> {
 
 		LLNode<E> node = new LLNode<E>(data);
 		LLNode<E> oldNode;
-		if(size > 0 || index > (size - 1) ) {
+		if(size > 0 && index < (size - 1) ) {
 			oldNode = getNode(index);
 		} else {
 			oldNode = tail;
@@ -173,10 +174,15 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 * @return The element that was replaced
 	 * @throws IndexOutOfBoundsException if the index is out of bounds.
 	 */
-	public E set(int index, E element) 
+	public E set(int index, E data) throws IndexOutOfBoundsException /*E element) */
 	{
-		// TODO: Implement this method
-		return null;
+		LLNode<E> node = getNode(index); // get method throws IndexOutOfBoundsException
+		
+		E oldData = node.data;
+		
+		node.data = data; // alter data
+		
+		return oldData;
 	}   
 }
 
@@ -195,5 +201,7 @@ class LLNode<E>
 		this.prev = null;
 		this.next = null;
 	}
+	
+	
 
 }
