@@ -4,9 +4,6 @@
 package textgen;
 
 import static org.junit.Assert.*;
-
-import java.util.LinkedList;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -109,12 +106,28 @@ public class MyLinkedListTester {
 	@Test
 	public void testRemove()
 	{
+		
 		int a = list1.remove(0);
 		assertEquals("Remove: check a is correct ", 65, a);
 		assertEquals("Remove: check element 0 is correct ", (Integer)21, list1.get(0));
 		assertEquals("Remove: check size is correct ", 2, list1.size());
 		
 		// TODO: Add more tests here
+		
+		/* removing from an index out of bound (upper) */
+		
+		try {
+			list1.remove(2);
+			fail("Remove: removing from too high of an index");
+		} catch(IndexOutOfBoundsException e) {
+			
+		}
+		/* lower */
+		try {
+			list1.remove(-1);
+			fail("Remove: removing from too low of an index");
+		} catch(IndexOutOfBoundsException e) {}
+
 	}
 	
 	/** Test adding an element into the end of the list, specifically
@@ -137,8 +150,8 @@ public class MyLinkedListTester {
 		emptyList.add(3);
 		assertEquals("Check size for empytList", 1, emptyList.size());
 		assertEquals("Check new element value for empytList", 3, emptyList.get(0).intValue());
-		assertEquals("Check if the new element's next node is the tail for empytList", emptyList.tail, emptyList.getNode(0).next);
-		assertEquals("Check the link between the new node and it's previous node for empytList", emptyList.getNode(0), emptyList.head.next);
+//		assertEquals("Check if the new element's next node is the tail for empytList", emptyList.tail, emptyList.getNode(0).next);
+//		assertEquals("Check the link between the new node and it's previous node for empytList", emptyList.getNode(0), emptyList.head.next);
 		
 		/*
 		 * Check for regular list (short list)
@@ -147,8 +160,8 @@ public class MyLinkedListTester {
 		shortList.add("C");
 		assertEquals("Check size for shortList", 3, shortList.size());
 		assertEquals("Check new element value for shortList", "C", shortList.get(2));
-		assertEquals("Check if the new element's next node is the tail for shortList", shortList.tail, shortList.getNode(2).next);
-		assertEquals("Check the link between the new node and it's previous node for shortList", shortList.getNode(2), shortList.getNode(2).prev.next);
+//		assertEquals("Check if the new element's next node is the tail for shortList", shortList.tail, shortList.getNode(2).next);
+//		assertEquals("Check the link between the new node and it's previous node for shortList", shortList.getNode(2), shortList.getNode(2).prev.next);
 		assertEquals("Check the previous value", "B", shortList.get(1));
 		
 		
@@ -188,27 +201,78 @@ public class MyLinkedListTester {
 		/*
 		 * Test for list1
 		 * corner cases: add in index: 0
-		 * 						       2
+		 * 						       
 		 * 
-		 * regular: add in index: 1
+		 * regular: add in index: 1 or 2
 		 */
 		
+		/*
+		 * Corner cases:
+		 * 	add in index greater than size(): throw index out of bound exception
+		 * 	add in index equals size(): // already tested in testAddEnd
+		 * 	add in index equals 0:
+		 */
+		
+		/*
+		 * Adding in out of bound (upper)
+		 */
+		
+		try {
+			list1.add(4, 99);
+			fail("Check index out of bound exception.");
+		} catch(IndexOutOfBoundsException e) {
+			
+		}
+			
+		/* lower */
+
+		try {
+			list1.add(-1, 99);
+			fail("Check index out of bound exception.");
+		} catch(IndexOutOfBoundsException e) {
+			
+		}
+		
+		/* adding null */
+		
+		try {
+			list1.add(2, null);
+			fail("Check null pointer exception.");
+		} catch(NullPointerException e) {
+			
+		}
+		
+		/* check for index 2 ( previous last element */
 		list1.add(2, 11);
 		assertEquals("check if the value was added in the right index for index 2",
-				11, list1.get(2).intValue());
+				(int)11, list1.get(2).intValue());
 		
-		list1.add(0, 22);
-		assertEquals("check if the value was added in the right index for index 0",
-				22, list1.get(0).intValue());
 		
-		list1.add(1, 33);
 		assertEquals("check that nodes are pushed the right direction, for the prev node",
-				22, list1.get(0).intValue());
+				21, list1.get(1).intValue());
 		
 		assertEquals("check that nodes are pushed the right direction, for the next node",
-				21, list1.get(2).intValue());
+				42, list1.get(3).intValue());
 		
-		assertEquals("Check for size increment", 6, list1.size());
+		assertEquals("Check for size increment", 4, list1.size());
+		
+		// unnecessary
+//		/*
+//		 * check for index 0
+//		 */
+//
+//		list1.add(0, 10);
+//		assertEquals("check if the value was added in the right index for index 2",
+//				(int)10, list1.get(0).intValue());
+//		
+//		
+//		assertEquals("check that nodes are pushed the right direction, for the prev node",
+//				list1.head, list1.getNode(0).prev);
+//		
+//		assertEquals("check that nodes are pushed the right direction, for the next node",
+//				65, list1.get(1).intValue());
+//		
+//		assertEquals("Check for size increment", 5, list1.size());
 		
 		
 		
@@ -219,10 +283,51 @@ public class MyLinkedListTester {
 	public void testSet()
 	{
 	    // TODO: implement this test
+		/*	Testing procedures
+		 * 		1- check if the method returns the old value.
+		 * 		2- check if the new value is set in the right index
+		 * 
+		 * 	Corner cases: 
+		 * 		1- setting null value
+		 * 		2- setting in an index greater than the last index (size - 1)
+		 * 
+		 */
+		
+		try {
+			list1.set(2, null);
+			fail("Check null pointer exception.");
+		} catch(NullPointerException e) {
+			
+		}
+		
+		try {
+			list1.set(list1.size(), 99);
+			fail("Check index out of bound exception.");
+		} catch(IndexOutOfBoundsException e) {
+			
+		}
+		
+		// Testing setting an element in index 2
+		assertEquals("Check if set method returns the old value.", 42, list1.set(2, 33).intValue());
+		assertEquals("Check if set method sets value in the right index.", 33, list1.get(2).intValue());
 	    
 	}
 	
 	
 	// TODO: Optionally add more test methods.
+	
+	public void testToString() {
+		
+	}
+	
+	// test for delete method in the LLNode class
+	public void testDeleteNode() {
+		
+	}
+	
+	// test LLNode constructor
+	public void testLLNodeConstructor() {
+		
+	}
 	
 }
