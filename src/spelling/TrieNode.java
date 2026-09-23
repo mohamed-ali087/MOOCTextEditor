@@ -1,5 +1,6 @@
 package spelling;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ class TrieNode {
 	 * @return The TrieNode that character links to, or null if that link
 	 *   is not in the trie.
 	 */
-	public TrieNode getChild(Character c)
+	public TrieNode getChild(Character c) /* Character is a wrapper class for char */
 	{
 		return children.get(c);
 	}
@@ -80,6 +81,10 @@ class TrieNode {
 	public Set<Character> getValidNextCharacters()
 	{
 		return children.keySet();
+	}
+	
+	public Collection<TrieNode> getChildren(){
+		return children.values();
 	}
 
 }

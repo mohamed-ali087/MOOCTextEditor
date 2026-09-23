@@ -1,9 +1,8 @@
 package spelling;
 
 import java.util.List;
-import java.util.Set;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Queue;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /** 
@@ -14,7 +13,7 @@ import java.util.LinkedList;
 public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 
     private TrieNode root;
-    private int size;
+    private int size; // count of words.
     
 
     public AutoCompleteDictionaryTrie()
@@ -39,8 +38,24 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	 */
 	public boolean addWord(String word)
 	{
-	    //TODO: Implement this method.
-	    return false;
+	    //DONE: Implement this method.
+		word = word.toLowerCase();
+		if(isWord(word)) {
+			return false;
+		}
+
+		TrieNode curr = root;
+		for(char c : word.toCharArray()) {
+			if(curr.getChild(c) == null) {
+				curr = curr.insert(c);
+				continue;
+			}
+			curr = curr.getChild(c);
+		}
+		curr.setEndsWord(true);
+		size++;	// size attribute holds count of words.
+
+		return true;
 	}
 	
 	/** 
@@ -49,17 +64,46 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	 */
 	public int size()
 	{
-	    //TODO: Implement this method
-	    return 0;
+	    //DONE: Implement this method
+	    return size;
 	}
 	
+	/* Unnecessary method */
+	public int size_calc() {
+		/*
+		 * breadth first approach.
+		 */
+		int size = 0;
+		TrieNode curr = root;
+		Queue<TrieNode> q = new LinkedList<TrieNode>();
+		do {
+			// add all current node's children to the queue
+			for(TrieNode tn : curr.getChildren()) {
+				q.add(tn);
+			}
+			curr = q.remove(); // assign current node to a new element of the queue
+			if(curr.endsWord()) size++;
+		} while(!q.isEmpty());
+
+		return size;
+	}
 	
 	/** Returns whether the string is a word in the trie, using the algorithm
 	 * described in the videos for this week. */
 	@Override
 	public boolean isWord(String s) 
 	{
-	    // TODO: Implement this method
+	    // DONE: Implement this method
+		s = s.toLowerCase();
+		TrieNode curr = root;
+		for(Character c : s.toCharArray()) {
+			TrieNode next = curr.getChild(c);
+			if(next == null) {
+				return false;
+			}
+			curr = next;
+		}
+		if(curr.endsWord()) return true;
 		return false;
 	}
 
@@ -83,10 +127,11 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
      * @param prefix The text to use at the word stem
      * @param numCompletions The maximum number of predictions desired.
      * @return A list containing the up to numCompletions best predictions
-     */@Override
+     */
+	 @Override
      public List<String> predictCompletions(String prefix, int numCompletions) 
      {
-    	 // TODO: Implement this method
+    	 // DONE: Implement this method
     	 // This method should implement the following algorithm:
     	 // 1. Find the stem in the trie.  If the stem does not appear in the trie, return an
     	 //    empty list
@@ -100,8 +145,32 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       If it is a word, add it to the completions list
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
+
+		ArrayList<String> completions = new ArrayList<String>();
+
+		TrieNode curr = root;
+		for(Character c : prefix.toCharArray()) {
+			TrieNode next = curr.getChild(c);
+
+			if(next == null) return completions;
+
+			curr = next;
+		}
+
+		Queue<TrieNode> q = new LinkedList<TrieNode>();
+		q.add(curr);
+		do {
+			curr = q.remove(); // assign current node to a new element of the queue
+
+			if(curr.endsWord()) completions.add(curr.getText());
+			// add all current node's children to the queue
+			for(TrieNode tn : curr.getChildren()) {
+				q.add(tn);
+			}
+		} while(!q.isEmpty() && completions.size() < numCompletions);
+		 
     	 
-         return null;
+         return completions;
      }
 
  	// For debugging
@@ -125,6 +194,5 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
  		}
  	}
  	
-
 	
 }
