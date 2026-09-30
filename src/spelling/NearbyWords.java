@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 /**
@@ -17,7 +18,8 @@ public class NearbyWords implements SpellingSuggest {
 	// THRESHOLD to determine how many words to look through when looking
 	// for spelling suggestions (stops prohibitively long searching)
 	// For use in the Optional Optimization in Part 2.
-	private static final int THRESHOLD = 1000; 
+//	private static final int THRESHOLD = 1000; 
+	private static final int THRESHOLD = 100000;
 
 	Dictionary dict;
 
@@ -76,7 +78,20 @@ public class NearbyWords implements SpellingSuggest {
 	 * @return
 	 */
 	public void insertions(String s, List<String> currentList, boolean wordsOnly ) {
-		// TODO: Implement this method  
+		// DONE: Implement this method  
+		for(int i = 0; i <= s.length(); i++) { /* used i<= s.length() because appending to the end of the word is included. */
+			for(int chCode = (int) 'a'; chCode <= (int) 'z'; chCode++) {
+				StringBuffer sb = new StringBuffer(s);
+				// inserting letter to index i.
+				sb.insert(i, (char)chCode);
+				
+				if(!currentList.contains(sb.toString()) &&
+						(!wordsOnly || dict.isWord(sb.toString()))&&
+						!s.equals(sb.toString())) {
+					currentList.add(sb.toString());
+				}
+			}
+		}
 	}
 
 	/** Add to the currentList Strings that are one character deletion away
@@ -87,7 +102,18 @@ public class NearbyWords implements SpellingSuggest {
 	 * @return
 	 */
 	public void deletions(String s, List<String> currentList, boolean wordsOnly ) {
-		// TODO: Implement this method
+		// DONE: Implement this method
+		for(int i = 0; i < s.length(); i++) {
+			StringBuffer sb = new StringBuffer(s);
+			// deleting letter to index i.
+			sb.deleteCharAt(i);
+			
+			if(!currentList.contains(sb.toString()) &&
+					(!wordsOnly || dict.isWord(sb.toString()))&&
+					!s.equals(sb.toString())) {
+				currentList.add(sb.toString());
+			}
+		}
 	}
 
 	/** Add to the currentList Strings that are one character deletion away
@@ -100,38 +126,65 @@ public class NearbyWords implements SpellingSuggest {
 	public List<String> suggestions(String word, int numSuggestions) {
 
 		// initial variables
-		List<String> queue = new LinkedList<String>();     // String to explore
+		Queue<String> queue = new LinkedList<String>();     // String to explore
 		HashSet<String> visited = new HashSet<String>();   // to avoid exploring the same  
 														   // string multiple times
 		List<String> retList = new LinkedList<String>();   // words to return
-		 
 		
 		// insert first node
 		queue.add(word);
 		visited.add(word);
-					
-		// TODO: Implement the remainder of this method, see assignment for algorithm
-		
-		return retList;
 
+		// DONE: Implement the remainder of this method, see assignment for algorithm
+		
+		int tc = 0; // Threshold counter.
+		while(!queue.isEmpty() && retList.size() < numSuggestions && tc < THRESHOLD) {
+			String curr = queue.remove();
+			List<String> mutList = distanceOne(curr, false);
+			for(String str : mutList) {
+				if(retList.size() >= numSuggestions) break;
+				if(!visited.contains(str)) {
+					queue.add(str);
+					visited.add(str);
+					if(dict.isWord(str)) {
+						retList.add(str);
+					}
+				}
+				tc++;
+			}
+		}
+					
+		return retList;
 	}	
 
    public static void main(String[] args) {
-	   /* basic testing code to get started
+	   /* basic testing code to get started */
 	   String word = "i";
 	   // Pass NearbyWords any Dictionary implementation you prefer
 	   Dictionary d = new DictionaryHashSet();
 	   DictionaryLoader.loadDictionary(d, "data/dict.txt");
 	   NearbyWords w = new NearbyWords(d);
-	   List<String> l = w.distanceOne(word, true);
+	   List<String> l = w.distanceOne(word, false);
 	   System.out.println("One away word Strings for for \""+word+"\" are:");
 	   System.out.println(l+"\n");
 
 	   word = "tailo";
-	   List<String> suggest = w.suggestions(word, 10);
+	   List<String> suggest = w.suggestions(word, 12);
 	   System.out.println("Spelling Suggestions for \""+word+"\" are:");
 	   System.out.println(suggest);
-	   */
+	   System.out.println(suggest.size());
+	   
+	   word = "kangaro";
+	   suggest = w.suggestions(word, 10);
+	   System.out.println("Spelling Suggestions for \""+word+"\" are:");
+	   System.out.println(suggest);
+	   
+	   word = "word";
+	   l = w.distanceOne(word, false);
+	   System.out.println("one away words for \""+word+"\" are:");
+	   System.out.println(l);
+	   System.out.println(l.size());
+
    }
 
 }

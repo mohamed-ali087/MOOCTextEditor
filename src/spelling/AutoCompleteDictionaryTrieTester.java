@@ -151,12 +151,10 @@ public class AutoCompleteDictionaryTrieTester {
 		completions = smallDict.predictCompletions("he", 2);
 		boolean allIn = completions.contains("he") && 
 				(completions.contains("hem") || completions.contains("hey"));
-		smallDict.printTree();
 		assertEquals(2, completions.size());
 		assertTrue(allIn);
 		
 		completions = smallDict.predictCompletions("hel", 10);
-		System.out.println(completions.size());
 		assertEquals(2, completions.size());
 		allIn = completions.contains("hello") && completions.contains("help");
 		assertTrue(allIn);
